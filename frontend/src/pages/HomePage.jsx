@@ -20,7 +20,9 @@ const HomePage = () => {
       try {
         setLoading(true);
         // Determine the correct API endpoint based on authentication status.
-        const articlesEndpoint = isAuthenticated ? '/news/personalized' : '/news';
+        // const articlesEndpoint = isAuthenticated ? '/news/personalized' : '/news';
+        const articlesEndpoint = '/news';
+
         const articlesPromise = api.get(articlesEndpoint);
         
         // If the user is authenticated, also fetch their saved articles.
@@ -89,7 +91,7 @@ const HomePage = () => {
         </div>
       )}
       <div className={isAuthenticated ? "lg:w-3/4" : "w-full"}>
-        {isAuthenticated && userPreferences.length > 0 && (
+        {/* {isAuthenticated && userPreferences.length > 0 && (
           <div className="mb-4 p-4 bg-indigo-50 dark:bg-indigo-900/50 rounded-lg">
             <h2 className="text-lg font-semibold text-indigo-700 dark:text-indigo-300 mb-2">Your Preferences</h2>
             <ul className="flex flex-wrap gap-2">
@@ -100,13 +102,14 @@ const HomePage = () => {
               ))}
             </ul>
           </div>
-        )}
+        )} */}
         <div className="mb-6">
           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">
             {isAuthenticated ? `Welcome back, ${user?.username}!` : 'Latest Headlines'}
           </h1>
           <p className="text-lg text-gray-500 dark:text-gray-400">
-            {isAuthenticated ? 'Your personalized news feed.' : 'Top stories from around the world.'}
+            {/* {isAuthenticated ? 'Your personalized news feed.' : 'Top stories from around the world.'} */}
+            Top stories from around the world.
           </p>
         </div>
 
@@ -121,13 +124,15 @@ const HomePage = () => {
           />
         </div>
 
+
         {loading ? (
           <LoadingSpinner />
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
         ) : (
+
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {/* THIS IS THE FIX: The comment has been removed */}
+
             {filteredArticles.length > 0 ? (
                 filteredArticles.map((article) => (
                     <ArticleCard 
