@@ -18,6 +18,14 @@ const ArticleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  imageUrl: {
+    type: String,
+    default: '',
+  },
+  description: {
+    type: String,
+    default: 'No description available.',
+  },
   category: {
     type: String,
     required: true,

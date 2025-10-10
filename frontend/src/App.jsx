@@ -7,6 +7,8 @@ import RegisterPage from './pages/RegisterPage.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
 import SavedArticlesPage from './pages/SavedArticlesPage.jsx';
 import PreferencesPage from './pages/PreferencesPage.jsx';
+import ArticleDetailsPage from './pages/ArticleDetailsPage.jsx';
+import cors from "cors";
 
 function App() {
   return (
@@ -14,12 +16,13 @@ function App() {
       <Navbar />
       <main className="container mx-auto p-4 lg:p-6">
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/category/:categoryName" element={<CategoryPage />} />
-          <Route path="/saved" element={<SavedArticlesPage />} />
-          <Route path="/preferences" element={<PreferencesPage />} />
+         <Route path="/" element={<HomePage />} />
+         <Route path="/login" element={<LoginPage />} />
+         <Route path="/register" element={<RegisterPage />} />
+         <Route path="/category/:categoryName" element={<CategoryPage />} />
+         <Route path="/article/:id" element={<ArticleDetailsPage />} />
+         <Route path="/saved" element={<SavedArticlesPage />} />
+         <Route path="/preferences" element={<PreferencesPage />} />
         </Routes>
       </main>
     </div>

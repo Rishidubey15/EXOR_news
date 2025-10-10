@@ -9,7 +9,7 @@ const Navbar = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  const categories = ['Technology', 'Business', 'Sports', 'Health', 'Science'];
+  const categories = ['Technology', 'Business', 'Sports', 'Health', 'Science', 'Entertainment'];
 
   const handleLogout = () => {
     logout();

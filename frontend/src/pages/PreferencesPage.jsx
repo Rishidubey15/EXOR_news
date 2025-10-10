@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const ALL_CATEGORIES = ['Technology', 'Business', 'Sports', 'Health', 'Science', 'Entertainment', 'Politics'];
 
 const PreferencesPage = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, updateUser } = useAuth();
   const [selectedPrefs, setSelectedPrefs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -31,10 +31,12 @@ const PreferencesPage = () => {
     setIsLoading(true);
     setMessage('');
     try {
-      await api.put('/user/preferences', { preferences: selectedPrefs });
+      const response = await api.put('/user/preferences', { preferences: selectedPrefs });
       setMessage('Preferences updated successfully!');
-       // Note: You might want to update the user in AuthContext here
-       // to reflect changes immediately across the app.
+      // Update user in AuthContext so preferences reflect immediately
+      if (user) {
+        updateUser({ ...user, preferences: selectedPrefs });
+      }
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       setMessage('Failed to update preferences. Please try again.');

@@ -62,6 +62,7 @@ const SavedArticlesPage = () => {
                     article={article}
                     onSave={() => handleUnsaveArticle(article._id)}
                     isSaved={true}
+                    unsaveMode={true}
                 />
               ))}
             </div>

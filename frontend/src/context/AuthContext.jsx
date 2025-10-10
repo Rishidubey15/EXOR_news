@@ -64,6 +64,10 @@ export const AuthProvider = ({ children }) => {
     navigate('/login');
   };
 
+  const updateUser = (newUser) => {
+    setUser(newUser);
+  };
+
   const value = {
     user,
     isAuthenticated: !!user,
@@ -71,6 +75,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    updateUser,
   };
 
   return (

@@ -7,7 +7,12 @@ dotenv.config();
 const app = express();
 connectDB();
 
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:5173', // Your frontend's address
+  optionsSuccessStatus: 200 
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/auth', require('./routes/authRoutes'));

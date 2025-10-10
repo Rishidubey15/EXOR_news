@@ -6,5 +6,6 @@ const auth = require('../middleware/authMiddleware');
 router.get('/', newsController.getAllNews);
 router.get('/personalized', auth, newsController.getPersonalizedNews);
 router.get('/:id', newsController.getNewsById);
+router.post('/:id/summarize', newsController.generateSummary);
 
 module.exports = router;

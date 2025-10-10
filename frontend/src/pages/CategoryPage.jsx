@@ -19,7 +19,8 @@ const CategoryPage = () => {
       try {
         setLoading(true);
         const response = await api.get(`/news?category=${categoryName}`);
-        setArticles(response.data);
+        let articlesData = response.data;
+        setArticles(articlesData);
       } catch (err) {
         setError(`Failed to fetch articles for ${categoryName}.`);
         console.error(err);
