@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate} from 'react-router-dom';
 import { Newspaper } from 'lucide-react';
 
 const AuthForm = ({ isRegister = false }) => {
@@ -9,18 +9,28 @@ const AuthForm = ({ isRegister = false }) => {
     email: '',
     password: '',
   });
+
+  const [error, setError] = useState(null);
   const { login, register } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isRegister) {
-      register(formData.username, formData.email, formData.password);
-    } else {
-      login(formData.email, formData.password);
+    setError(null); 
+    try {
+      if (isRegister) {
+        await register(formData.username, formData.email, formData.password);
+      } else {
+        await login(formData.email, formData.password);
+      }
+      navigate('/');
+    } catch (err) {
+      console.error("Authentication failed", err);
+      const msg = err.response?.data?.msg || err.response?.data?.message || 'Authentication failed. Please check your credentials and try again.';
+      setError(msg);
     }
   };
 
@@ -48,6 +58,9 @@ const AuthForm = ({ isRegister = false }) => {
             )}
           </p>
         </div>
+        {error && (
+          <div className="text-sm text-red-600 bg-red-50 dark:bg-red-900/30 p-3 rounded">{error}</div>
+        )}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {isRegister && (
             <div>

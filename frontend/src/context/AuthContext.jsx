@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useMemo, useCallback } from 'react'; // 1. Import useMemo and useCallback
 import api from '../services/api.jsx';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,45 +30,50 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = async (email, password) => {
+  const login = useCallback(async (email, password) => {
     try {
       const response = await api.post('/auth/login', { email, password });
-      const { token, user } = response.data;
+      const { token } = response.data;
       localStorage.setItem('token', token);
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
+      // Fetch current user profile after obtaining token
+      const me = await api.get('/auth/me');
+      setUser(me.data);
       navigate('/');
     } catch (error) {
       console.error("Login failed", error);
-      // You can add state to show an error message to the user
+      throw error;
     }
-  };
+  }, []);
 
-  const register = async (username, email, password) => {
+  const register = useCallback(async (username, email, password) => {
     try {
       const response = await api.post('/auth/register', { username, email, password });
-      const { token, user } = response.data;
+      const { token } = response.data;
       localStorage.setItem('token', token);
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
+      const me = await api.get('/auth/me');
+      setUser(me.data);
       navigate('/');
     } catch (error) {
       console.error("Registration failed", error);
+      throw error;
     }
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
     delete api.defaults.headers.common['Authorization'];
     setUser(null);
     navigate('/login');
-  };
+  }, [navigate]);
 
-  const updateUser = (newUser) => {
+  const updateUser = useCallback((newUser) => {
     setUser(newUser);
-  };
+  }, []);
 
-  const value = {
+  // This ensures the object reference only changes when user or loading state changes.
+  const value = useMemo(() => ({
     user,
     isAuthenticated: !!user,
     loading,
@@ -76,7 +81,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     updateUser,
-  };
+  }), [user, loading, login, register, logout, updateUser]);
 
   return (
     <AuthContext.Provider value={value}>
@@ -84,4 +89,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-

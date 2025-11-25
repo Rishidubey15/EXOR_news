@@ -10,7 +10,7 @@ const FormattedArticleBody = ({ text }) => {
     return null;
   }
 
-  const blocks = text.split('\n\n');
+  const blocks = text.split('\n');
 
   return (
     <div>

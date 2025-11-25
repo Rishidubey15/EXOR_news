@@ -19,9 +19,8 @@ const HomePage = () => {
     const initializePage = async () => {
       try {
         setLoading(true);
-        // Determine the correct API endpoint based on authentication status.
-        // const articlesEndpoint = isAuthenticated ? '/news/personalized' : '/news';
-        const articlesEndpoint = '/news';
+  // Determine the correct API endpoint based on authentication status.
+        const articlesEndpoint = isAuthenticated ? '/news/personalized' : '/news';
 
         const articlesPromise = api.get(articlesEndpoint);
         
@@ -91,18 +90,7 @@ const HomePage = () => {
         </div>
       )}
       <div className={isAuthenticated ? "lg:w-3/4" : "w-full"}>
-        {/* {isAuthenticated && userPreferences.length > 0 && (
-          <div className="mb-4 p-4 bg-indigo-50 dark:bg-indigo-900/50 rounded-lg">
-            <h2 className="text-lg font-semibold text-indigo-700 dark:text-indigo-300 mb-2">Your Preferences</h2>
-            <ul className="flex flex-wrap gap-2">
-              {userPreferences.map((pref, idx) => (
-                <li key={idx} className="px-3 py-1 bg-indigo-200 dark:bg-indigo-700 rounded-full text-indigo-900 dark:text-indigo-100 text-sm font-medium">
-                  {pref}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )} */}
+       
         <div className="mb-6">
           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">
             {isAuthenticated ? `Welcome back, ${user?.username}!` : 'Latest Headlines'}
@@ -133,16 +121,17 @@ const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-            {filteredArticles.length > 0 ? (
-                filteredArticles.map((article) => (
-                    <ArticleCard 
-                        key={article._id} 
-                        article={article} 
-                        onSave={() => handleSaveArticle(article._id)} 
-                        isSaved={savedArticles.has(article._id)}
-                    />
-                ))
-            ) : (
+      {filteredArticles.length > 0 ? (
+        filteredArticles.map((article) => (
+          <ArticleCard 
+            key={article._id} 
+            article={article} 
+            onSave={() => handleSaveArticle(article._id)} 
+            isSaved={savedArticles.has(article._id)}
+          />
+        ))
+
+      ) : (
                 <p className="text-gray-500 dark:text-gray-400 col-span-full text-center">No articles found matching your preferences or search.</p>
             )}
           </div>

@@ -8,6 +8,7 @@ import CategoryPage from './pages/CategoryPage.jsx';
 import SavedArticlesPage from './pages/SavedArticlesPage.jsx';
 import PreferencesPage from './pages/PreferencesPage.jsx';
 import ArticleDetailsPage from './pages/ArticleDetailsPage.jsx';
+import UploadArticlePage from './pages/UploadArticlePage.jsx';
 import cors from "cors";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
          <Route path="/register" element={<RegisterPage />} />
          <Route path="/category/:categoryName" element={<CategoryPage />} />
          <Route path="/article/:id" element={<ArticleDetailsPage />} />
+          <Route path="/upload" element={<UploadArticlePage />} />
          <Route path="/saved" element={<SavedArticlesPage />} />
          <Route path="/preferences" element={<PreferencesPage />} />
         </Routes>

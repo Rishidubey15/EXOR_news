@@ -47,19 +47,26 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex items-center space-x-4">
               {isAuthenticated ? (
-                <div className="relative">
+                
+                <div className="relative flex items-center space-x-4">
+                  {/* Button for user to add a new article */}
+                  <button onClick={() => navigate('/upload')} className="mr-3 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-2 rounded-md transition-colors duration-200">
+                    Upload Article
+                  </button>
+
                   <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} className="flex items-center space-x-2 focus:outline-none">
                     <span className="font-medium text-sm">{user?.username}</span>
                     <User className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 p-1.5 text-gray-600 dark:text-gray-300" />
                   </button>
                   {isProfileMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
+                    <div className="absolute right-0 mt-40 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
                       <Link to="/saved" onClick={() => setIsProfileMenuOpen(false)} className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <Bookmark className="mr-2" size={16} /> Saved Articles
                       </Link>
                        <Link to="/preferences" onClick={() => setIsProfileMenuOpen(false)} className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <Settings className="mr-2" size={16} /> Preferences
                       </Link>
+                    
                       <button onClick={handleLogout} className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <LogOut className="mr-2" size={16} /> Logout
                       </button>
@@ -114,6 +121,7 @@ const Navbar = () => {
                     </div>
                     <Link to="/saved" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">Saved Articles</Link>
                     <Link to="/preferences" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">Preferences</Link>
+                    <Link to="/upload" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">Upload Article</Link>
                     <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">Logout</button>
                 </div>
               ) : (

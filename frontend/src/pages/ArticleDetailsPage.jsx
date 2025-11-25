@@ -55,7 +55,7 @@ const ArticleDetailsPage = () => {
   const readingTime = Math.ceil(article.description.split(' ').length / 200);
 
   return (
-    <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow p-6 font-serif">
+    <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow p-6 font-serif">
       {article.isFakeNews && (
           <div className="p-2 bg-red-400 dark:bg-yellow-600 text-white-900 dark:text-yellow-100 flex items-center text-sm font-semibold mb-4">
             <AlertTriangle size={16} className="mr-2" />
