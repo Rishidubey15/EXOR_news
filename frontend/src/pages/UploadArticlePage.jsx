@@ -23,6 +23,7 @@ const UploadArticlePage = () => {
     }
     try {
       setLoading(true);
+      // const uploadApi =
       await api.post('/news/upload', { url: url.trim() });
       // Redirect to home; HomePage will re-fetch articles
       navigate('/');
@@ -38,7 +39,7 @@ const UploadArticlePage = () => {
   return (
     <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
       <h2 className="text-2xl font-semibold mb-4">Upload Article</h2>
-      <p className="text-sm text-gray-500 mb-4">Paste an article link below to add it to the feed. Paid subscribers only.</p>
+      <p className="text-sm text-gray-500 mb-4">Paste an article link below to add it to the feed.</p>
       {error && <div className="mb-4 text-sm text-red-600">{error}</div>}
       <form onSubmit={handleSubmit}>
         <input

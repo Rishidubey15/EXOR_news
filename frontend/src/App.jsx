@@ -9,6 +9,7 @@ import SavedArticlesPage from './pages/SavedArticlesPage.jsx';
 import PreferencesPage from './pages/PreferencesPage.jsx';
 import ArticleDetailsPage from './pages/ArticleDetailsPage.jsx';
 import UploadArticlePage from './pages/UploadArticlePage.jsx';
+import DetectFakeNewsPage from './pages/DetectFakeNewsPage.jsx';
 import cors from "cors";
 
 function App() {
@@ -22,9 +23,10 @@ function App() {
          <Route path="/register" element={<RegisterPage />} />
          <Route path="/category/:categoryName" element={<CategoryPage />} />
          <Route path="/article/:id" element={<ArticleDetailsPage />} />
-          <Route path="/upload" element={<UploadArticlePage />} />
+         <Route path="/upload" element={<UploadArticlePage />} />
          <Route path="/saved" element={<SavedArticlesPage />} />
          <Route path="/preferences" element={<PreferencesPage />} />
+         <Route path="/detect-fakeNews" element={<DetectFakeNewsPage/>} />
         </Routes>
       </main>
     </div>

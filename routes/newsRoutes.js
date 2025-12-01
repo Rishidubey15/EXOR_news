@@ -7,6 +7,7 @@ router.get('/', newsController.getAllNews);
 router.get('/personalized', auth, newsController.getPersonalizedNews);
 // Allow authenticated users to upload an article link
 router.post('/upload', auth, newsController.uploadArticle);
+router.post('/detect-fakeNews', auth, newsController.detectFakeNews);
 router.get('/:id', newsController.getNewsById);
 router.post('/:id/summarize', newsController.generateSummary);
 

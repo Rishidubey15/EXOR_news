@@ -20,7 +20,7 @@ const HomePage = () => {
       try {
         setLoading(true);
   // Determine the correct API endpoint based on authentication status.
-        const articlesEndpoint = isAuthenticated ? '/news/personalized' : '/news';
+        const articlesEndpoint = user ? '/news/personalized' : '/news';
 
         const articlesPromise = api.get(articlesEndpoint);
         
@@ -51,8 +51,8 @@ const HomePage = () => {
   const handleSaveArticle = async (articleId) => {
     if (!isAuthenticated) {
       // It's better to navigate to login or show a modal than to use alert.
-      // navigate('/login'); 
-      alert("Please log in to save articles.");
+      navigate('/login'); 
+      // alert("Please log in to save articles.");
       return;
     }
     try {
@@ -121,17 +121,16 @@ const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-      {filteredArticles.length > 0 ? (
-        filteredArticles.map((article) => (
-          <ArticleCard 
-            key={article._id} 
-            article={article} 
-            onSave={() => handleSaveArticle(article._id)} 
-            isSaved={savedArticles.has(article._id)}
-          />
-        ))
-
-      ) : (
+            {filteredArticles.length > 0 ? (
+                filteredArticles.map((article) => (
+                    <ArticleCard 
+                        key={article._id}   
+                        article={article} 
+                        onSave={() => handleSaveArticle(article._id)} 
+                        isSaved={savedArticles.has(article._id)}
+                    />
+                ))
+            ) : (
                 <p className="text-gray-500 dark:text-gray-400 col-span-full text-center">No articles found matching your preferences or search.</p>
             )}
           </div>

@@ -3,8 +3,8 @@ import { Bookmark, ExternalLink, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ArticleCard = ({ article, onSave, isSaved, unsaveMode = false }) => {
-  const { title, source, summary, category, isFakeNews, url, publishedAt } = article;
-
+  const { title, source, summary, category, isFakeNews, url, publishedAt, userUploaded } = article;
+  // console.log('ArticleCard article:', article);
   const handleSaveClick = (e) => {
     e.stopPropagation();
     e.preventDefault();
@@ -24,9 +24,16 @@ const ArticleCard = ({ article, onSave, isSaved, unsaveMode = false }) => {
           <div className="flex justify-between items-start mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">{category}</span>
             <span className="text-xs text-gray-500 dark:text-gray-400">{new Date(publishedAt).toLocaleDateString()}</span>
-          </div>
+          </div> 
           <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400">{title}</h3>
           <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed flex-grow">{summary}</p>
+        </div>
+        <div>
+          {userUploaded && (
+             <span className="mx-4 px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full inline-block">
+            User Submitted
+          </span>
+          )}
         </div>
         <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 flex justify-between items-center">
           <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{source}</span>

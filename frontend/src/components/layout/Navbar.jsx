@@ -49,10 +49,16 @@ const Navbar = () => {
               {isAuthenticated ? (
                 
                 <div className="relative flex items-center space-x-4">
+                  <button onClick={() => navigate('/detect-fakeNews')} className="mr-3 text-sm font-medium text-white bg-red-600 hover:bg-red-800 px-3 py-2 rounded-md transition-colors duration-200">
+                    Detect fake news
+                  </button>
+
                   {/* Button for user to add a new article */}
                   <button onClick={() => navigate('/upload')} className="mr-3 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-2 rounded-md transition-colors duration-200">
                     Upload Article
                   </button>
+
+                  
 
                   <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} className="flex items-center space-x-2 focus:outline-none">
                     <span className="font-medium text-sm">{user?.username}</span>
@@ -122,6 +128,7 @@ const Navbar = () => {
                     <Link to="/saved" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">Saved Articles</Link>
                     <Link to="/preferences" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">Preferences</Link>
                     <Link to="/upload" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">Upload Article</Link>
+                    <Link to="/detect-fakeNews" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-white bg-red-600 hover:bg-red-800">Detect Fake News</Link>
                     <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">Logout</button>
                 </div>
               ) : (

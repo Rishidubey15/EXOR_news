@@ -2,7 +2,11 @@ const Article = require('../models/Article');
 const User = require('../models/User');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
-const SUMMARY_SERVICE_URL = 'http://127.0.0.1:8000/summarize/';
+const ml_url = process.env.ml_url;
+const SUMMARY_SERVICE_URL = `${ml_url}/sumzee`;
+const SUMMARY_SERVICE_USER = `${ml_url}/sumzee-user`;
+const FAKE_NEWS_URL = `${ml_url}/proctor/`;
+const scrape_url = `${ml_url}/fetch-article/`;
 
 exports.getAllNews = async (req, res) => {
   try {
@@ -31,7 +35,7 @@ exports.getPersonalizedNews = async (req, res) => {
         description: doc.description,
         category: doc.category,
         publishedAt: doc.publishedAt,
-        uploadedByUser: true,
+        userUploaded: doc.isUserSubmitted || false,
       }))
       .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
 
@@ -102,20 +106,95 @@ exports.getNewsById = async (req, res) => {
 
 exports.generateSummary = async (req, res) => {
   try {
-    const article = await Article.findById(req.params.id);
+    const { id } = req.params;
+    let article = await Article.findById(id);
+    let isUserUploaded = false;
+    let user = null;
+
     if (!article) {
-      return res.status(404).json({ message: 'Article not found' });
+      const token = req.header('Authorization')?.replace('Bearer ', '');
+      if (!token) return res.status(404).json({ message: 'Article not found' });
+
+      let decoded;
+      try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+      } catch (err) {
+        return res.status(404).json({ message: 'Article not found' });
+      }
+
+      user = await User.findById(decoded.user.id);
+      if (!user) return res.status(404).json({ message: 'Article not found' });
+
+      let sub = null;
+      if (typeof user.uploadedArticles.id === 'function') {
+        sub = user.uploadedArticles.id(id);
+      } else {
+        sub = (user.uploadedArticles || []).find(a => String(a._id) === String(id));
+      }
+
+      if (!sub) return res.status(404).json({ message: 'Article not found' });
+      article = sub;
+      isUserUploaded = true;
+    } else {
+      isUserUploaded = article.isUserSubmitted || false;
     }
 
-    // Call the Python service with the article's full text
-    const summaryResponse = await axios.post(SUMMARY_SERVICE_URL, {
-      text: article.description, // 'description' now holds the full text
-    });
+    let summaryResponse;
+    if (isUserUploaded) {
+      if (!user) {
+        const token = req.header('Authorization')?.replace('Bearer ', '');
+        if (token) {
+          try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            user = await User.findById(decoded.user.id);
+          } catch (err) {
+           
+          }
+        }
+      }
+      if (!user) return res.status(400).json({ message: 'User info required for user-uploaded article' });
+      summaryResponse = await axios.post(SUMMARY_SERVICE_USER, { article_id: id, user_id: user._id 
+      });
+    } else {
+      summaryResponse = await axios.get(SUMMARY_SERVICE_URL, {
+        params: { article_id: id }
+      });
+    }
 
     res.json({ summary: summaryResponse.data.summary });
   } catch (error) {
     console.error("Error calling summary service:", error.message);
-    res.status(500).json({ message: 'Failed to generate summary' });
+    res.status(500).json({ message: 'Failed to generate summary', error: error.message });
+  }
+};
+
+// Detect fake news from user input
+exports.detectFakeNews = async (req, res) => {
+  try {
+    const { question } = req.body;
+    if (!question) return res.status(400).json({ message: 'Question is required' });
+
+    // Call ML service
+    const mlResponse = await axios.post(FAKE_NEWS_URL, {claim: question });
+    const { model_response, sources } = mlResponse.data;
+
+    // Fetch article titles for sources
+    let articles = [];
+    if (Array.isArray(sources) && sources.length > 0) {
+      articles = await Article.find({ _id: { $in: sources } }, 'title');
+    }
+    // Map source IDs to titles
+    const sourceTitles = articles.map((a, idx) => ({ id: a._id, title: a.title, label: `article${idx+1}` }));
+
+    res.json({
+      reason: model_response.reason,
+      verdict: model_response.verdict,
+      confidence: model_response.confidence,
+      sources: sourceTitles
+    });
+  } catch (error) {
+    console.error('Error detecting fake news:', error.message);
+    res.status(500).json({ message: 'Failed to detect fake news', error: error.message });
   }
 };
 
@@ -142,51 +221,17 @@ exports.uploadArticle = async (req, res) => {
       return res.status(400).json({ message: 'Article already exists in main collection' });
     }
 
-    // Try to fetch the page to extract basic metadata
-    let title = 'User submitted article';
-    let description = 'No description available.';
-    let imageUrl = '';
-    try {
-      const resp = await axios.get(url, { timeout: 8000, headers: { 'User-Agent': 'EXOR-News-Agent/1.0' } });
-      const html = resp.data;
-      const titleMatch = html.match(/<title>([^<]*)<\/title>/i);
-      if (titleMatch && titleMatch[1]) title = titleMatch[1].trim();
-
-      const descMatch = html.match(/<meta\s+(?:name|property)=["'](?:description|og:description)["']\s+content=["']([^"']*)["']/i);
-      if (descMatch && descMatch[1]) description = descMatch[1].trim();
-
-      const imgMatch = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']*)["']/i);
-      if (imgMatch && imgMatch[1]) imageUrl = imgMatch[1].trim();
-    } catch (err) {
-      // If fetching fails, continue with defaults but report issue in response if needed
-      console.warn('Failed to fetch remote URL for metadata:', err.message);
-    }
-
-    let source = '';
-    try {
-      source = new URL(url).hostname;
-    } catch (err) {
-      source = 'unknown';
-    }
-
-    // Create a user-scoped uploaded article and push it into the user's document so it's visible only to them
-    const uploadedObj = {
-      title,
-      source,
-      url,
-      summary: description || 'User submitted article',
-      imageUrl,
-      description,
-      category: 'User Submitted',
-      publishedAt: new Date(),
-    };
+    let scraped = await axios.post(scrape_url, {
+      url: url
+    });
 
     user.uploadedArticles = user.uploadedArticles || [];
-    user.uploadedArticles.push(uploadedObj);
+    user.uploadedArticles.push(scraped.data);
     await user.save();
 
     // Return the newly added uploaded article (take last element)
     const added = user.uploadedArticles[user.uploadedArticles.length - 1];
+    console.log('Uploaded article added:', added);
     return res.status(201).json(added);
   } catch (error) {
     console.error('Error uploading article:', error.message);

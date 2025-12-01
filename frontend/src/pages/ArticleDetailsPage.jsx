@@ -34,10 +34,7 @@ const ArticleDetailsPage = () => {
 
     try {
       setLoadingSummary(true);
-      const summaryApiUrl = 'http://10.252.103.113:8888/sumzee/';
-      const response = await api.get(summaryApiUrl, {
-        params: { id }
-      });
+      const response = await api.post(`/news/${id}/summarize`);
       setSummary(response.data.summary);
     } catch (err) {
       console.error("Failed to generate summary", err);
@@ -71,7 +68,7 @@ const ArticleDetailsPage = () => {
       )}
       
       <h1 className="text-3xl font-bold mb-4 font-sans">{article.title}</h1>
-      
+
 
       <div className="text-sm text-gray-500 dark:text-gray-400 border-b dark:border-gray-600 pb-4 mb-4">
         <span>By <strong>{article.source}</strong></span>
@@ -80,6 +77,8 @@ const ArticleDetailsPage = () => {
         <span className="mx-2">&middot;</span>
         <span>{readingTime} min read</span>
       </div>
+
+      
 
       {/* Summarization Section */}
       <div className="my-6">
