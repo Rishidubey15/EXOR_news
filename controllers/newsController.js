@@ -4,7 +4,6 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const ml_url = process.env.ml_url;
 const SUMMARY_SERVICE_URL = `${ml_url}/sumzee`;
-const SUMMARY_SERVICE_USER = `${ml_url}/sumzee-user`;
 const FAKE_NEWS_URL = `${ml_url}/proctor/`;
 const scrape_url = `${ml_url}/fetch-article/`;
 
@@ -41,6 +40,7 @@ exports.getPersonalizedNews = async (req, res) => {
 
     // Fetch main collection articles. If user has preferences, filter by them; otherwise return all global articles.
     const mainFilter = user.preferences && user.preferences.length ? { category: { $in: user.preferences } } : {};
+
     const mainArticles = await Article.find(mainFilter).sort({ publishedAt: -1 });
 
     // Return uploaded articles first (private), then the common articles
@@ -153,7 +153,7 @@ exports.generateSummary = async (req, res) => {
         }
       }
       if (!user) return res.status(400).json({ message: 'User info required for user-uploaded article' });
-      summaryResponse = await axios.post(SUMMARY_SERVICE_USER, { article_id: id, user_id: user._id 
+      summaryResponse = await axios.post(SUMMARY_SERVICE_URL, { article_id: id, user_id: user._id 
       });
     } else {
       summaryResponse = await axios.get(SUMMARY_SERVICE_URL, {
